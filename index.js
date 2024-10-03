@@ -1,9 +1,7 @@
 // TASK: import helper functions from utils
-export const getTasks = () => {
-  const tasks = localStorage.getItem('tasks');
-  return tasks ? JSON.parse(tasks) : [];
-};
+
 // TASK: import initialData
+
 
 
 /*************************************************************************************************************************************************
@@ -22,6 +20,15 @@ function initializeData() {
 
 // TASK: Get elements from the DOM
 const elements = {
+  headerBoardName: document.getElementById('header-board-name'),
+  columnDivs: document.querySelectorAll('.column-div'),
+  hideSideBarBtn: document.getElementById('hide-side-bar-btn'),
+  showSideBarBtn: document.getElementById('show-side-bar-btn'),
+  themeSwitch: document.getElementById('switch'),
+  modalWindow: document.getElementById('new-task-modal-window'),
+  editTaskModal: document.querySelector('.edit-task-modal-window'),
+  filterDiv: document.getElementById('filterDiv')
+  
 
 }
 
