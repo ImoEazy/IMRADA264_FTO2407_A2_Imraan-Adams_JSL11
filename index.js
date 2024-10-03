@@ -1,5 +1,5 @@
 // TASK: import helper functions from utils
-import { getTasks, createNewTask } from "./utils/taskFunctions";
+import { getTasks, createNewTask, patchTask, deleteTask } from "./utils/taskFunctions";
 // TASK: import initialData
 import { initialData } from "./initialData";
 
@@ -20,17 +20,20 @@ function initializeData() {
 
 // TASK: Get elements from the DOM
 const elements = {
-  headerBoardName: document.getElementById('header-board-name'),
-  columnDivs: document.querySelectorAll('.column-div'),
-  hideSideBarBtn: document.getElementById('hide-side-bar-btn'),
   showSideBarBtn: document.getElementById('show-side-bar-btn'),
-  themeSwitch: document.getElementById('switch'),
+  hideSideBarBtn: document.getElementById('hide-side-bar-btn'),
+  headerBoardName: document.getElementById('header-board-name'),
+  addNewTaskBtn: document.getElementById('add-new-task-btn'),
+  createNewTaskBtn: document.getElementById('create-task-btn'),
+  cancelAddTaskBtn: document.getElementById('cancel-add-task-btn'),
+  filterDiv: document.getElementById('filterDiv'),
   modalWindow: document.getElementById('new-task-modal-window'),
   editTaskModal: document.querySelector('.edit-task-modal-window'),
-  filterDiv: document.getElementById('filterDiv')
-  
+  themeSwitch: document.getElementById('switch'),
+  columnDivs: document.querySelectorAll('.column-div'),
+  logo: document.getElementById('logo'), 
 
-}
+};
 
 let activeBoard = ""
 
@@ -42,7 +45,7 @@ function fetchAndDisplayBoardsAndTasks() {
   displayBoards(boards);
   if (boards.length > 0) {
     const localStorageBoard = JSON.parse(localStorage.getItem("activeBoard"))
-    activeBoard = localStorageBoard ? localStorageBoard ;  boards[0]; 
+    activeBoard = localStorageBoard ? localStorageBoard :  boards[0]; "defaultBoardName";
     elements.headerBoardName.textContent = activeBoard
     styleActiveBoard(activeBoard)
     refreshTasksUI();
