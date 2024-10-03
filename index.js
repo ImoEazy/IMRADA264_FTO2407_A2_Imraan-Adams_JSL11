@@ -1,4 +1,8 @@
 // TASK: import helper functions from utils
+export const getTasks = () => {
+  const tasks = localStorage.getItem('tasks');
+  return tasks ? JSON.parse(tasks) : [];
+};
 // TASK: import initialData
 
 
