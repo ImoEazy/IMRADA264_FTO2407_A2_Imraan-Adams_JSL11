@@ -20,18 +20,33 @@ function initializeData() {
 
 // TASK: Get elements from the DOM
 const elements = {
-  showSideBarBtn: document.getElementById('show-side-bar-btn'),
-  hideSideBarBtn: document.getElementById('hide-side-bar-btn'),
-  headerBoardName: document.getElementById('header-board-name'),
-  addNewTaskBtn: document.getElementById('add-new-task-btn'),
-  createNewTaskBtn: document.getElementById('create-task-btn'),
-  cancelAddTaskBtn: document.getElementById('cancel-add-task-btn'),
-  filterDiv: document.getElementById('filterDiv'),
-  modalWindow: document.getElementById('new-task-modal-window'),
-  editTaskModal: document.querySelector('.edit-task-modal-window'),
-  themeSwitch: document.getElementById('switch'),
-  columnDivs: document.querySelectorAll('.column-div'),
-  logo: document.getElementById('logo'), 
+  headerBoardName : document.getElementById('header-board-name'),
+  columnDivs: [
+    document.querySelector("[data-status='todo']"),
+    document.querySelector("[data-status='doing']"),
+    document.querySelector("[data-status='done']")
+  ],
+  editTaskModal : document.getElementsByClassName('edit-task-modal-window')[0],
+  modalWindow : document.getElementById('new-task-modal-window'),
+  filterDiv : document.getElementById('filterDiv'),
+  hideSideBarBtn : document.getElementById('hide-side-bar-btn'),
+  showSideBarBtn : document.getElementById('show-side-bar-btn'),
+  themeSwitch : document.getElementById('switch'),
+  createNewTaskBtn : document.getElementById('add-new-task-btn'),
+  boardsContainer : document.getElementById("boards-nav-links-div"),
+  cancelEditBtn : document.getElementById('cancel-edit-btn'),
+  cancelAddTaskBtn : document.getElementById('cancel-add-task-btn'),
+  titleInput : document.getElementById('title-input'),
+  descInput : document.getElementById('desc-input'),
+  selectStatus : document.getElementById('select-status'),
+  sideBarDiv : document.getElementById('side-bar-div'),
+  editTaskTitleInput : document.getElementById('edit-task-title-input'),
+  editTaskDescInput : document.getElementById('edit-task-desc-input'),
+  editSelectStatus : document.getElementById('edit-select-status'),
+  saveChangeBtn : document.getElementById('save-task-changes-btn'),
+  cancelChangeBtn : document.getElementById('cancel-edit-btn'),
+  deleteTaskBtn : document.getElementById('delete-task-btn')
+
 
 };
 
@@ -45,12 +60,12 @@ function fetchAndDisplayBoardsAndTasks() {
   displayBoards(boards);
   
   if (boards.length > 0) {
-    const localStorageBoard = JSON.parse(localStorage.getItem("activeBoard"))
-    activeBoard = localStorageBoard || boards [0];  //? localStorageBoard :  boards[0]; "defaultBoardName";//changed :
+    const localStorageBoard = localStorage.getItem("activeBoard")//removed JSON.parse
+    activeBoard = localStorageBoard ? JSON.parse(localStorageBoard) :  boards[0]; //changed JSON.parse
     elements.headerBoardName.textContent = activeBoard
     styleActiveBoard(activeBoard)
-    //refreshTasksUI();
-    filterAndDisplayTasksByBoard(activeBoard);//added function to display active board
+    refreshTasksUI();
+    
   }
 }
 
@@ -59,21 +74,18 @@ function fetchAndDisplayBoardsAndTasks() {
 function displayBoards(boards) {
   const boardsContainer = document.getElementById("boards-nav-links-div");
   boardsContainer.innerHTML = ''; // Clears the container
-  
   boards.forEach(board => {
     const boardElement = document.createElement("button");
     boardElement.textContent = board;
-    boardElement.classList.add("board-btn");
-    
-    boardElement.addEventListener("click",() => {    //changed eventlistener click"
+    boardElement.classList.add("board-btn");  
+    boardElement.addEventListener('click', () => {    //changed eventlistener click"
       elements.headerBoardName.textContent = board;
-      //filterAndDisplayTasksByBoard(board);
+      filterAndDisplayTasksByBoard(board);
       activeBoard = board //assigns active board
       localStorage.setItem("activeBoard", JSON.stringify(activeBoard))
       styleActiveBoard(activeBoard)
-      filterAndDisplayTasksByBoard(board);//moved
     });
-    boardsContainer.appendChild(boardElement);
+    elements.boardsContainer.appendChild(boardElement);//added const element to property and method
   });
 
 }/// ADD FUNCTION TO INITIALIZE TITLES
@@ -88,13 +100,17 @@ function filterAndDisplayTasksByBoard(boardName) {
 
   elements.columnDivs.forEach(column => {
     const status = column.getAttribute("data-status");
+    
     // Reset column content while preserving the column title
-    column.innerHTML = `<div class="column-head-div">
-                          <span class="dot" id="${status}-dot"></span>
-                          <h4 class="columnHeader">${status.toUpperCase()}</h4>
-                        </div>`;
+    column.innerHTML = `
+        <div class="column-head-div"> 
+            <span class="dot" id="${status}-dot"></span>
+            <h4 class="columnHeader">${status.toUpperCase()}</h4>
+        </div>
+      `;//changed content to fit in div column
 
     const tasksContainer = document.createElement("div");
+    tasksContainer.classList.add('tasks-container')//added method to fetch element from DOM and add string in container
     column.appendChild(tasksContainer);
 
     filteredTasks.filter(task => task.status === status).forEach(task => {// changed = to === 
@@ -104,7 +120,7 @@ function filterAndDisplayTasksByBoard(boardName) {
       taskElement.setAttribute('data-task-id', task.id);
 
       // Listen for a click event on each task and open a modal
-      taskElement.click = () => { //changed to ".click = () =>"
+      taskElement.addEventListener('click', (event) => { //changed to ".click" added event listener
         openEditTaskModal(task);
       };
 
