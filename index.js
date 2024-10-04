@@ -71,7 +71,7 @@ function displayBoards(boards) {
     boardsContainer.appendChild(boardElement);
   });
 
-}
+}/// ADD FUNCTION TO INITIALIZE TITLES
 
 // Filters tasks corresponding to the board name and displays them on the DOM.
 // TASK: Fix Bugs
@@ -129,7 +129,7 @@ function styleActiveBoard(boardName) {
 
 
 function addTaskToUI(task) {
-  const column = document.querySelector('.column-div[data-status="${task.status}"]'); 
+  const column = document.querySelector(`.column-div[data-status="${task.status}"]`); //coorected backtick for literal template
   if (!column) {
     console.error(`Column not found for status: ${task.status}`);
     return;
@@ -148,7 +148,7 @@ function addTaskToUI(task) {
   taskElement.textContent = task.title; // Modify as needed
   taskElement.setAttribute('data-task-id', task.id);
   
-  tasksContainer.appendChild(); 
+  tasksContainer.appendChild(taskElement); //taskElement added for argumet/html element
 }
 
 
@@ -156,7 +156,7 @@ function addTaskToUI(task) {
 function setupEventListeners() {
   // Cancel editing task event listener
   const cancelEditBtn = document.getElementById('cancel-edit-btn');
-  cancelEditBtn.click() => toggleModal(false, elements.editTaskModal));
+  cancelEditBtn.click = () => toggleModal(false, elements.editTaskModal);// added = to create onclick
 
   // Cancel adding new task event listener
   const cancelAddTaskBtn = document.getElementById('cancel-add-task-btn');
@@ -172,8 +172,8 @@ function setupEventListeners() {
   });
 
   // Show sidebar event listener
-  elements.hideSideBarBtn.click() => toggleSidebar(false));
-  elements.showSideBarBtn.click() => toggleSidebar(true));
+  elements.hideSideBarBtn.click = () => toggleSidebar(false);//corrected syntax onclick '='
+  elements.showSideBarBtn.click = () => toggleSidebar(true);//corrected syntax onclick
 
   // Theme switch event listener
   elements.themeSwitch.addEventListener('change', toggleTheme);
@@ -193,7 +193,7 @@ function setupEventListeners() {
 // Toggles tasks modal
 // Task: Fix bugs
 function toggleModal(show, modal = elements.modalWindow) {
-  modal.style.display = show ? 'block' => 'none'; 
+  modal.style.display = show ? 'block' : 'none'; // changed => to : for ternary
 }
 
 /*************************************************************************************************************************************************
