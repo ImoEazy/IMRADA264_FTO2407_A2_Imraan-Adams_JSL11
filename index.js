@@ -43,12 +43,14 @@ function fetchAndDisplayBoardsAndTasks() {
   const tasks = getTasks();
   const boards = [...new Set(tasks.map(task => task.board).filter(Boolean))];
   displayBoards(boards);
+  
   if (boards.length > 0) {
     const localStorageBoard = JSON.parse(localStorage.getItem("activeBoard"))
-    activeBoard = localStorageBoard ? localStorageBoard :  boards[0]; "defaultBoardName";//changed :
+    activeBoard = localStorageBoard || boards [0];  //? localStorageBoard :  boards[0]; "defaultBoardName";//changed :
     elements.headerBoardName.textContent = activeBoard
     styleActiveBoard(activeBoard)
-    refreshTasksUI();
+    //refreshTasksUI();
+    filterAndDisplayTasksByBoard(activeBoard);//added function to display active board
   }
 }
 
@@ -57,17 +59,20 @@ function fetchAndDisplayBoardsAndTasks() {
 function displayBoards(boards) {
   const boardsContainer = document.getElementById("boards-nav-links-div");
   boardsContainer.innerHTML = ''; // Clears the container
+  
   boards.forEach(board => {
     const boardElement = document.createElement("button");
     boardElement.textContent = board;
     boardElement.classList.add("board-btn");
-    boardElement.onclick = () => {    //changed to onclick for defining proper function
+    
+    boardElement.addEventListener("click",() => {    //changed eventlistener click"
       elements.headerBoardName.textContent = board;
-      filterAndDisplayTasksByBoard(board);
+      //filterAndDisplayTasksByBoard(board);
       activeBoard = board //assigns active board
       localStorage.setItem("activeBoard", JSON.stringify(activeBoard))
       styleActiveBoard(activeBoard)
-    };
+      filterAndDisplayTasksByBoard(board);//moved
+    });
     boardsContainer.appendChild(boardElement);
   });
 
