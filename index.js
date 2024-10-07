@@ -1,7 +1,7 @@
 // TASK: import helper functions from utils
 import { getTasks, createNewTask, patchTask, deleteTask } from "./utils/taskFunctions.js"; //added helper functions from utilities
 // TASK: import initialData
-import { initialData } from "./initialData.js";//added initial data
+import { initialData } from "./initialData.js";//added import initial data to populate local storage if empty
 
 /*************************************************************************************************************************************************
  * FIX BUGS!!!
@@ -18,8 +18,8 @@ function initializeData() {
 }
 
 
-// TASK: Get elements from the DOM. Elements with properties added from the DOM
-const elements = {
+// TASK: Get elements from DOM. 
+const elements = { //element object contains refrences to various DOM elements (buttons/headers/modal window etc.)
   themeSwitch: document.getElementById('switch'),
   hideSideBarBtn: document.getElementById('hide-side-bar-btn'),
   showSideBarBtn: document.getElementById('show-side-bar-btn'),
@@ -34,7 +34,7 @@ const elements = {
   
 }
 
-let activeBoard = ""
+let activeBoard = ""//variable keeps track of currently selected board via user
 
 // Extracts unique board names from tasks
 // TASK: FIX BUGS
@@ -83,10 +83,10 @@ function filterAndDisplayTasksByBoard(boardName) {
   elements.columnDivs.forEach(column => {
     const status = column.getAttribute("data-status");
     // Reset column content while preserving the column title
-    column.innerHTML =  `<div class="column-head-div">
+    column.innerHTML = `<div class="column-head-div">
                           <span class="dot" id="${status}-dot"></span>
                           <h4 class="columnHeader">${status.toUpperCase()}</h4>
-                         </div>`;//alligned columns
+                        </div>`;//alligned columns
 
     const tasksContainer = document.createElement("div");
     tasksContainer.className = 'tasks-container'; // added the classname property to class container
@@ -204,7 +204,7 @@ function addTask(event) {//handles addition of a new task added
   event.preventDefault(); //stops default submission behaviour
 
   //Assign user input to the task object
-    const task = {// creates task object with input values for user input
+    const task = {// created task object with input values for user input
       title: document.getElementById('title-input').value,
       description: document.getElementById('desc-input').value,
       status: document.getElementById('select-status').value,
@@ -212,7 +212,7 @@ function addTask(event) {//handles addition of a new task added
       id: new Date().getTime() 
     };
     
-    const newTask = createNewTask(task); //use createNewTask to process the task
+    const newTask = createNewTask(task); //createNewTask to process the task
     if (newTask) {
       addTaskToUI(newTask);//adds to UI if successful
       toggleModal(false);
@@ -223,40 +223,41 @@ function addTask(event) {//handles addition of a new task added
 }
 
 
-
+//show or hide sidebar based on user interaction
 function toggleSidebar(show) {
-  const sideBar = document.getElementById('side-bar-div');//added const sideabar
-  const showSideBarBtn = document.getElementById('show-side-bar-btn');//added const showSideBarBtn
-  
-  if (show) {//check side open/close
+  //const fetches sidebar and button elements using ID
+  const sideBar = document.getElementById('side-bar-div');
+  const showSideBarBtn = document.getElementById('show-side-bar-btn');
+  //use 'show' parameter to determine sidebar visibility based on toggle
+  if (show) {
     sideBar.style.display = 'block'; //when true show sidebar
     showSideBarBtn.style.display = 'none';//hide the button
-  }else {
+  }else {//if not true does the opposite
     // when it is false hide the button
     sideBar.style.display = 'none';
     // otherwise display the button
     showSideBarBtn.style.display = 'block';
   }
-  localStorage.setItem('showSideBar', show)
+  localStorage.setItem('showSideBar', show)//saves sidebar visibility state in local strge when used across sessions
 }
-
+//toggles between light/dark themes
 function toggleTheme() {
   // const used to toggle light-theme 'class' on the body element
   const isLightTheme = document.body.classList.toggle('light-theme');
-  // saves the current state of theme in the local storage
+  // saves the current state of theme in the local storage to remember user input
   localStorage.setItem('light-theme', isLightTheme ? 'enabled' : 'disabled');
   //ternary operator; if the 'light-theme' class is on, allow save 'enabled', otherwise 'disabled'
 }
 
 
-
+///function prepares modal for editing existing task
 function openEditTaskModal(task) {
-  // Set task details in modal inputs
-  document.getElementById('edit-task-title-input').value = task.title;//fetches task details added in user input
+  // populate modal inputs field with current user details of the task
+  document.getElementById('edit-task-title-input').value = task.title;
   document.getElementById('edit-task-desc-input').value = task.description;
   document.getElementById('edit-select-status').value = task.status;
 
-  // Get button elements from the task modal
+  // Get button elements from the task modal.Btn event handlers to set for 'save change/dlte task' btns
   const saveTaskChangesBtn = document.getElementById('save-task-changes-btn');
   const deleteTaskBtn = document.getElementById('delete-task-btn');
 
@@ -265,7 +266,7 @@ function openEditTaskModal(task) {
 
   // Delete task using a helper function and close the task modal
   deleteTaskBtn.onclick = () => {
-    // confirms before deleting the task , using confirm function
+    // confirms before deleting the task , using confirmation prompt
     const confirmation = confirm("You want to delete this task?");
     if (confirmation) {
       // Deletes task with the specific id
@@ -278,14 +279,14 @@ function openEditTaskModal(task) {
       refreshTasksUI();
     }
   };
-
-  toggleModal(true, elements.editTaskModal); // Show the edit task modal
+  //finaly displays and Show the edit task modal
+  toggleModal(true, elements.editTaskModal); 
 }
 
-
+//function to save changes made to existing task
 function saveTaskChanges(taskId) {
-  // Get new user inputs
-  const taskDetails = {//gets user inputs relating to property
+  // Get new user inputs using getelement by Id method
+  const taskDetails = {
     title: document.getElementById('edit-task-title-input').value,
     description: document.getElementById('edit-task-desc-input').value,
     status: document.getElementById('edit-select-status').value,
@@ -294,7 +295,7 @@ function saveTaskChanges(taskId) {
   } 
 
   // Create an object with the updated task details
-  const updatedTask = {// object with updated tasks relating to property of i
+  const updatedTask = {// prepares object with updated details
     title: taskDetails.title,
     description: taskDetails.description,
     status: taskDetails.status,
@@ -302,7 +303,7 @@ function saveTaskChanges(taskId) {
     id: taskDetails.id
   };
 
-  // Update task using a hlper functoin
+  // Calls helper function to update task in the data source
   patchTask(taskId, updatedTask)
 
   // Close the modal and refresh the UI to reflect the changes
